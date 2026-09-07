@@ -2,6 +2,15 @@
 
 All notable changes to FrontEdit HTML are documented here.
 
+## [1.2.0] - 2026-09-07
+
+### Fixed
+- Element eligibility no longer depends on whether the element currently has text content. Previously, emptying an element's text (e.g. deleting it entirely and saving) would exclude it from the next render's editable set — making it permanently un-editable — and silently shift the position-based numbering of every later sibling with the same tag, corrupting which element a subsequent save would target.
+
+### Added
+- Image editing: an `<img>` inside the Custom HTML block is now editable. Clicking it in edit mode opens the WordPress media library so a different image can be selected; saving updates only that image's `src`/`alt` and clears any stale `srcset`/`sizes` left over from the previous image. Gated behind the `upload_files` capability on both the render and save paths — users who can't upload media never see images marked as editable, and the server rejects an image edit from anyone lacking that capability even if attempted directly against the REST endpoint.
+- Image swaps are restricted to attachments that actually exist in the site's media library (verified server-side via `attachment_url_to_postid`); an arbitrary external URL cannot be written into the page this way.
+
 ## [1.1.0] - 2026-09-07
 
 ### Fixed

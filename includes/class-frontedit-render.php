@@ -37,7 +37,7 @@ class FrontEdit_HTML_Render {
 			return $block_content;
 		}
 
-		$nodes = FrontEdit_HTML_Core::collect_editable_nodes( $root, $order );
+		$nodes = FrontEdit_HTML_Core::collect_editable_nodes( $root, $order, current_user_can( 'upload_files' ) );
 		if ( empty( $nodes ) ) {
 			return $block_content;
 		}

@@ -2,6 +2,21 @@
 
 This file is for human review of what changed and why. See CHANGELOG.md for the version-by-version technical log.
 
+## 2026-09-07 — Fix silent ID drift on emptied elements, add image editing (v1.2.0)
+
+**Changed**
+- Editable-element eligibility is now purely structural (tag + nesting position), never based on whether the element currently has text. The old "skip if empty" check was meant to avoid tagging decorative empty elements, but it meant deleting all of an element's text and saving made it permanently un-clickable afterward, and — more seriously — shifted the occurrence-based numbering of every later sibling of the same tag in that block, so a save could silently land on the wrong element. This was reported directly: "I deleted an entire text, saved it, then visited that deleted element again... it's not editable anymore."
+
+**Added**
+- Image editing. An eligible `<img>` inside a Custom HTML block can now be clicked in edit mode to open the WordPress media library and swap in a different image. Restricted to users who can already upload media (`upload_files`), checked both when deciding what to mark editable and again on save. The server also verifies the submitted image URL resolves to a real attachment in this site's library before writing it into the page — an arbitrary external URL is rejected.
+
+**Reverted / removed**
+- N/A.
+
+**Known limitation:** swapping an image doesn't currently update `width`/`height` attributes to match the new image's actual dimensions, and drops `srcset`/`sizes` outright rather than regenerating them for the new attachment. In most modern layouts (flexible containers, `object-fit: cover`, etc.) this is invisible, but a page relying on exact fixed image dimensions could see a shape mismatch until that's addressed in a future version.
+
+**Why:** Direct feedback from continued front-end testing — the emptied-element bug was a correctness issue worth fixing immediately; image editing was a feature request to extend the plugin beyond text.
+
 ## 2026-09-07 — First real-site feedback: contrast fix + popup/navigation guard (v1.1.0)
 
 **Changed**

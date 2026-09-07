@@ -17,8 +17,17 @@ class FrontEdit_HTML_Core {
 	// (e.g. a standalone "button-style" link, but not a link inside a paragraph).
 	const STANDALONE_TAGS = array( 'a', 'span', 'button' );
 
-	public static function editable_tags() {
-		return apply_filters( 'frontedit_html_editable_tags', array_merge( self::BLOCK_TAGS, self::STANDALONE_TAGS ) );
+	// Swapped via the media library rather than made contenteditable — always
+	// eligible regardless of nesting, since an <img> can't contain other
+	// editable elements and has no text content to check.
+	const MEDIA_TAGS = array( 'img' );
+
+	public static function editable_tags( $include_media = true ) {
+		$tags = array_merge( self::BLOCK_TAGS, self::STANDALONE_TAGS );
+		if ( $include_media ) {
+			$tags = array_merge( $tags, self::MEDIA_TAGS );
+		}
+		return apply_filters( 'frontedit_html_editable_tags', $tags, $include_media );
 	}
 
 	public static function allowed_inline_html() {
@@ -116,9 +125,15 @@ class FrontEdit_HTML_Core {
 	 * fe_id format: "{block_order}.{tag}.{occurrence}" — purely positional,
 	 * computed identically on render and on save. Nothing is persisted to
 	 * post_content or post meta to produce it.
+	 *
+	 * Eligibility is structural only (tag + nesting) and deliberately does
+	 * NOT depend on whether the element currently has text content: skipping
+	 * emptied elements would both make them permanently un-re-editable and
+	 * shift the occurrence numbering of every later sibling with the same
+	 * tag, silently corrupting fe_id matching on the next save.
 	 */
-	public static function collect_editable_nodes( DOMElement $root, $block_order ) {
-		$tags   = self::editable_tags();
+	public static function collect_editable_nodes( DOMElement $root, $block_order, $include_media = true ) {
+		$tags   = self::editable_tags( $include_media );
 		$counts = array();
 		$result = array();
 
@@ -135,16 +150,14 @@ class FrontEdit_HTML_Core {
 				continue;
 			}
 
-			if ( in_array( $tag, self::STANDALONE_TAGS, true ) && self::has_block_ancestor( $node, $root ) ) {
-				continue; // e.g. a link inside a <p> — the <p> owns editing, not the link.
-			}
+			if ( ! in_array( $tag, self::MEDIA_TAGS, true ) ) {
+				if ( in_array( $tag, self::STANDALONE_TAGS, true ) && self::has_block_ancestor( $node, $root ) ) {
+					continue; // e.g. a link inside a <p> — the <p> owns editing, not the link.
+				}
 
-			if ( in_array( $tag, self::BLOCK_TAGS, true ) && self::has_editable_descendant( $node ) ) {
-				continue; // avoid nested block containers both being editable at once.
-			}
-
-			if ( '' === trim( $node->textContent ) ) {
-				continue;
+				if ( in_array( $tag, self::BLOCK_TAGS, true ) && self::has_editable_descendant( $node ) ) {
+					continue; // avoid nested block containers both being editable at once.
+				}
 			}
 
 			if ( ! isset( $counts[ $tag ] ) ) {

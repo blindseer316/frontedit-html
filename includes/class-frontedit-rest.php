@@ -63,14 +63,22 @@ class FrontEdit_HTML_REST {
 				continue;
 			}
 
-			$nodes = FrontEdit_HTML_Core::collect_editable_nodes( $root, $order );
+			$nodes = FrontEdit_HTML_Core::collect_editable_nodes( $root, $order, current_user_can( 'upload_files' ) );
 
 			foreach ( $edits as $edit ) {
 				$fe_id = $order . '.' . $edit['tag'] . '.' . $edit['occurrence'];
 				if ( ! isset( $nodes[ $fe_id ] ) ) {
 					continue; // structure shifted since the page was loaded — skip rather than guess.
 				}
-				self::replace_node_contents( $dom, $nodes[ $fe_id ], $edit['html'] );
+
+				if ( 'image' === $edit['type'] ) {
+					if ( ! current_user_can( 'upload_files' ) ) {
+						continue;
+					}
+					self::replace_image( $nodes[ $fe_id ], $edit['src'], $edit['alt'] );
+				} else {
+					self::replace_node_contents( $dom, $nodes[ $fe_id ], $edit['html'] );
+				}
 			}
 
 			$new_inner_html = FrontEdit_HTML_Core::fragment_inner_html( $dom, $root );
@@ -98,7 +106,7 @@ class FrontEdit_HTML_REST {
 		$by_block = array();
 
 		foreach ( $changes as $change ) {
-			if ( empty( $change['fe_id'] ) || ! isset( $change['html'] ) ) {
+			if ( empty( $change['fe_id'] ) ) {
 				continue;
 			}
 
@@ -108,15 +116,56 @@ class FrontEdit_HTML_REST {
 			}
 
 			list( $order, $tag, $occurrence ) = $parts;
+			$type = isset( $change['type'] ) ? $change['type'] : 'text';
 
-			$by_block[ (int) $order ][] = array(
-				'tag'        => sanitize_key( $tag ),
-				'occurrence' => (int) $occurrence,
-				'html'       => FrontEdit_HTML_Core::sanitize_inline_html( wp_unslash( $change['html'] ) ),
-			);
+			if ( 'image' === $type ) {
+				if ( ! isset( $change['src'] ) ) {
+					continue;
+				}
+				$by_block[ (int) $order ][] = array(
+					'tag'        => sanitize_key( $tag ),
+					'occurrence' => (int) $occurrence,
+					'type'       => 'image',
+					'src'        => esc_url_raw( wp_unslash( $change['src'] ) ),
+					'alt'        => isset( $change['alt'] ) ? sanitize_text_field( wp_unslash( $change['alt'] ) ) : '',
+				);
+			} else {
+				if ( ! isset( $change['html'] ) ) {
+					continue;
+				}
+				$by_block[ (int) $order ][] = array(
+					'tag'        => sanitize_key( $tag ),
+					'occurrence' => (int) $occurrence,
+					'type'       => 'text',
+					'html'       => FrontEdit_HTML_Core::sanitize_inline_html( wp_unslash( $change['html'] ) ),
+				);
+			}
 		}
 
 		return $by_block;
+	}
+
+	/**
+	 * Only ever points an <img> at a real attachment in this site's media
+	 * library — never at an arbitrary URL — and drops any srcset/sizes,
+	 * which would otherwise keep referencing the old image's generated sizes.
+	 */
+	private static function replace_image( DOMElement $node, $src, $alt ) {
+		$attachment_id = attachment_url_to_postid( $src );
+		if ( ! $attachment_id ) {
+			return;
+		}
+
+		$node->setAttribute( 'src', $src );
+
+		if ( '' !== $alt ) {
+			$node->setAttribute( 'alt', $alt );
+		} else {
+			$node->removeAttribute( 'alt' );
+		}
+
+		$node->removeAttribute( 'srcset' );
+		$node->removeAttribute( 'sizes' );
 	}
 
 	private static function replace_node_contents( DOMDocument $dom, DOMElement $node, $new_html ) {
