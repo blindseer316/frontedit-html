@@ -2,6 +2,12 @@
 
 All notable changes to FrontEdit HTML are documented here.
 
+## [1.2.1] - 2026-09-07
+
+### Fixed
+- Hovering an editable image showed a text-caret cursor (misleading, since clicking it opens the media picker, not text editing). Now shows a pointer cursor instead.
+- The floating Save/Exit toolbar had no border or accent, so on some pages it visually blended into the page behind it. Added a visible border and a stronger, tinted shadow so it stands out regardless of the underlying page's colors.
+
 ## [1.2.0] - 2026-09-07
 
 ### Fixed

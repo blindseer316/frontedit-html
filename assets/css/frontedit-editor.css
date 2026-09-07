@@ -27,6 +27,10 @@ body.frontedit-edit-mode [data-fe-id] {
 	box-shadow: 0 0 0 1px transparent;
 }
 
+body.frontedit-edit-mode img[data-fe-id] {
+	cursor: pointer;
+}
+
 /*
  * A ring drawn with box-shadow rather than background-color or outline:
  * box-shadow never repaints the element's own background, so it can't wash
@@ -52,7 +56,8 @@ body.frontedit-edit-mode [data-fe-id]:focus {
 	color: #fff;
 	padding: 10px 16px;
 	border-radius: 8px;
-	box-shadow: 0 4px 16px rgba(0, 0, 0, .25);
+	border: 1px solid #2271b1;
+	box-shadow: 0 4px 20px rgba(0, 0, 0, .45), 0 0 0 4px rgba(34, 113, 177, .15);
 	display: flex;
 	align-items: center;
 	gap: 10px;

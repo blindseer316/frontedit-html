@@ -2,6 +2,14 @@
 
 This file is for human review of what changed and why. See CHANGELOG.md for the version-by-version technical log.
 
+## 2026-09-07 — Cursor and toolbar visibility polish (v1.2.1)
+
+**Changed**
+- Editable images now show a pointer cursor on hover instead of a text caret, matching their actual click behavior (opens the media picker).
+- The floating Save/Exit toolbar now has a visible border and stronger shadow so it doesn't visually melt into the page behind it.
+
+**Why:** Direct feedback while testing the image feature and general edit-mode UI.
+
 ## 2026-09-07 — Fix silent ID drift on emptied elements, add image editing (v1.2.0)
 
 **Changed**
