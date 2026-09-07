@@ -3,7 +3,7 @@
  * Plugin Name: FrontEdit HTML
  * Plugin URI:  https://earthbreakdesigns.com
  * Description: Lets logged-in editors update text inside Custom HTML (Gutenberg) blocks directly from the front end, without touching the block editor. Manage it from Settings > FrontEdit HTML.
- * Version:     1.0.1
+ * Version:     1.1.0
  * Author:      Earthbreakdesigns.com
  * Author URI:  https://earthbreakdesigns.com
  * License:     GPL-2.0-or-later
@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'FRONTEDIT_HTML_VERSION', '1.0.1' );
+define( 'FRONTEDIT_HTML_VERSION', '1.1.0' );
 define( 'FRONTEDIT_HTML_FILE', __FILE__ );
 define( 'FRONTEDIT_HTML_DIR', plugin_dir_path( __FILE__ ) );
 define( 'FRONTEDIT_HTML_URL', plugin_dir_url( __FILE__ ) );

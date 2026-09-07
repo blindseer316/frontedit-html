@@ -2,6 +2,21 @@
 
 This file is for human review of what changed and why. See CHANGELOG.md for the version-by-version technical log.
 
+## 2026-09-07 — First real-site feedback: contrast fix + popup/navigation guard (v1.1.0)
+
+**Changed**
+- Removed the `background-color` tint from the hover/focus highlight and replaced it with a `box-shadow` ring. The tint was washing out buttons that already had their own background/ghost styling (reported: a phone-number CTA button turned white on hover).
+
+**Added**
+- A capture-phase click guard, active only while edit mode is on: clicking an editable link or button no longer navigates the page or fires a bound popup/lightbox script — it just lets you place your cursor to edit the text. Ctrl/Cmd-click bypasses the guard so the real link/popup can still be triggered on purpose.
+
+**Reverted / removed**
+- N/A.
+
+**Known limitation confirmed by testing:** this plugin only understands Custom HTML (`core/html`) blocks. A page built entirely from native Gutenberg blocks shows no Edit Page button at all, by design — those blocks have their own editing paths elsewhere. Extending this plugin to also cover simple native blocks (paragraph, heading) is possible later since their rendered output is plain HTML too, but block attribute round-tripping is a different code path than the Custom HTML block case and hasn't been scoped yet.
+
+**Why:** Direct feedback from testing the plugin live for the first time — no crash, but the hover/focus overlay clashed with an existing button's ghost styling, and a separate concern was raised about editable buttons wired to a popup script firing unintentionally while trying to edit their text.
+
 ## 2026-09-07 — Moved edit button off the admin bar (v1.0.1)
 
 **Changed**

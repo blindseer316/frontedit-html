@@ -17,6 +17,25 @@
 		}
 	} );
 
+	/*
+	 * While editing, a plain click on an editable link/button would otherwise
+	 * still fire its normal behavior — navigating away, or triggering a
+	 * popup/lightbox script bound to that same click — which fights with
+	 * placing a text cursor to edit it. Suppress that in the capture phase
+	 * (so it never reaches the site's own click handlers), but let a
+	 * Ctrl/Cmd-click through untouched so the real link or popup can still
+	 * be tested on purpose.
+	 */
+	document.addEventListener( 'click', function ( e ) {
+		if ( ! editMode || e.ctrlKey || e.metaKey ) {
+			return;
+		}
+		if ( e.target.closest( '[data-fe-id]' ) ) {
+			e.preventDefault();
+			e.stopPropagation();
+		}
+	}, true );
+
 	function toggleEditMode() {
 		editMode = ! editMode;
 		document.body.classList.toggle( 'frontedit-edit-mode', editMode );

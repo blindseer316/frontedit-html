@@ -41,6 +41,12 @@ class FrontEdit_HTML_Admin {
 			<h2>Editable elements</h2>
 			<p>By default: headings (h1&ndash;h6), paragraphs, list items, blockquotes, table cells, and standalone links/buttons/spans that aren't nested inside another editable element. Developers can adjust this with the <code>frontedit_html_editable_tags</code> filter.</p>
 
+			<h2>Links, buttons, and popups</h2>
+			<p>While in edit mode, clicking a link or button that's part of the editable content won't navigate away or trigger its normal behavior (e.g. a popup script) — it just places your cursor so you can edit the text. Hold <strong>Ctrl</strong> (<strong>&#8984;</strong> on Mac) while clicking to let that click through as normal, if you need to test the actual link or popup.</p>
+
+			<h2>Custom HTML blocks only</h2>
+			<p>This only works on <strong>Custom HTML</strong> Gutenberg blocks. Pages built entirely from native Gutenberg blocks (paragraph, heading, buttons, etc.) won't show the Edit Page button — those blocks already have their own editing path through Gutenberg or other front-end block editors.</p>
+
 			<h2>What gets changed</h2>
 			<p>Only the raw HTML inside the specific Custom HTML block on the page you're editing is touched. Nothing is rewritten anywhere else, and no editing markup is ever saved to the database or shown to visitors who aren't logged in.</p>
 

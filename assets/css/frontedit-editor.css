@@ -21,21 +21,25 @@
 }
 
 body.frontedit-edit-mode [data-fe-id] {
-	outline: 1px dashed transparent;
-	transition: outline-color .15s ease, background-color .15s ease;
 	cursor: text;
 	min-height: 1em;
+	transition: box-shadow .15s ease;
+	box-shadow: 0 0 0 1px transparent;
 }
 
+/*
+ * A ring drawn with box-shadow rather than background-color or outline:
+ * box-shadow never repaints the element's own background, so it can't wash
+ * out a button's existing color (outline also doesn't respect border-radius
+ * reliably, box-shadow does).
+ */
 body.frontedit-edit-mode [data-fe-id]:hover {
-	outline-color: #2271b1;
-	background-color: rgba(34, 113, 177, 0.06);
+	box-shadow: 0 0 0 2px #2271b1;
 }
 
 body.frontedit-edit-mode [data-fe-id]:focus {
-	outline: 2px solid #2271b1;
-	outline-offset: 1px;
-	background-color: rgba(34, 113, 177, 0.08);
+	outline: none;
+	box-shadow: 0 0 0 2px #2271b1, 0 0 0 4px rgba(34, 113, 177, .25);
 }
 
 #frontedit-toolbar {

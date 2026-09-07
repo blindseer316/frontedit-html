@@ -2,6 +2,17 @@
 
 All notable changes to FrontEdit HTML are documented here.
 
+## [1.1.0] - 2026-09-07
+
+### Fixed
+- Edit-mode hover/focus highlighting no longer paints a background tint over elements, which was washing out buttons that use their own background color (e.g. a ghost-style CTA turning white on hover). Replaced with a non-destructive `box-shadow` ring that never touches the element's own colors.
+
+### Added
+- While in edit mode, clicking a link or button that's part of the editable content no longer triggers its normal behavior (page navigation, or a popup/lightbox script bound to that click) — the click is suppressed in the capture phase so it can't reach the site's own handlers, letting you safely click in to edit the text. Holding Ctrl/Cmd while clicking lets the click through normally, for testing the real link or popup on purpose.
+
+### Documentation
+- Settings > FrontEdit HTML now explains the Ctrl/Cmd-click behavior and clarifies that only Custom HTML blocks are supported (not native Gutenberg blocks).
+
 ## [1.0.1] - 2026-09-07
 
 ### Changed
